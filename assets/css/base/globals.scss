@@ -1,0 +1,42 @@
+@use "abstracts/functions";
+@use "abstracts/mixins";
+
+html {
+  font-size: functions.rem(16);
+}
+
+h1 {
+  font-size: functions.rem(43);
+  font-weight: 700;
+}
+
+p {
+  font-size: functions.rem(17);
+  margin: 20px 0;
+}
+
+@include mixins.responsive("lg-devices") {
+  h1 {
+    font-size: functions.rem(34);
+  }
+  p {
+    font-size: functions.rem(14);
+    margin: functions.rem(15) 0;
+  }
+}
+
+@include mixins.responsive("md-devices") {
+  h1 {
+    font-size: functions.rem(26);
+  }
+}
+
+@include mixins.responsive("sm-devices") {
+  h1 {
+    font-size: functions.rem(23);
+  }
+  .wrapper-loggedout-page .loggedout-content p,
+  .wrapper-login-page .login-content p {
+    font-size: functions.rem(12);
+  }
+}

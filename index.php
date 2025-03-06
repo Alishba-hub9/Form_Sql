@@ -1,46 +1,77 @@
-<?php include 'db.php'; ?>
+<?php
+ session_start();
+if (!isset($_SESSION['user'])) {
+    header("Location: admin.php");
+    exit;
+}
+require 'includes/db.php';
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Personal Data Form</title>
-    <link rel="stylesheet" href="dist/css/vendors.min.css" />
-    <link rel="stylesheet" href="dist/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="dist/css/vendors.min.css">
+    <link rel="stylesheet" href="dist/css/style.css">
 </head>
 <body>
 
-<h2>User Details</h2>
-<form class="user-details-form">
-    <input type="hidden" name="id">
-    <input type="text" name="name" placeholder="Enter Name" required>
-    <input type="number" name="age" placeholder="Enter Age" required>
-    <input type="number" name="phone" placeholder="Enter Phone Number" required>
-    <input type="text" name="company" placeholder="Enter Company Name" required>
-    <input type="text" name="country" placeholder="Enter Country" required>
-    <div class="submit-button">
-        <button type="submit" class="submit-btn">Submit</button>
+ <div class="wrapper-registration-page">
+
+    <div class="content-container">
+        <!-- Form -->
+        <div>
+            <h2>Registration Form</h2>
+            <form class="users-registration-form">
+                <input type="hidden" name="id">
+                <input type="text" name="name" placeholder="Enter Name" required>
+                <input type="number" name="age" placeholder="Enter Age" required>
+                <input type="number" name="phone" placeholder="Enter Phone Number" required>
+                <input type="text" name="company" placeholder="Enter Company Name" required>
+                <input type="text" name="country" placeholder="Enter Country" required>
+                <div class="submit-button">
+                    <button type="submit" class="submit-btn">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div>
+            <h2>Registered Records</h2>
+            <table class="user-records-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Phone</th>
+                        <th>Company</th>
+                        <th>Country</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="user-records-body">
+                    <tr>
+                        <td colspan="6">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</form>
 
-<h2>User Records</h2>
-<table class="user-records-table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Phone</th>
-            <th>Company</th>
-            <th>Country</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody class="user-records-body"></tbody>
-</table>
+</div>
 
-<script src="dist/js/vendors.min.js"></script>
-<script src="dist/js/script.min.js"></script>
+<button class="logout-btn">Logout</button>
+
+<script src="dist/js/vendors.min.js" defer></script>
+<script src="dist/js/script.min.js" defer></script>
 
 </body>
-</html> 
+</html>

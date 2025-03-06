@@ -1,58 +1,27 @@
+var usersDataTemplate = (row) => `
+  <tr>
+    <td>${row.name}</td>
+    <td>${row.age}</td>
+    <td>${row.phone}</td>
+    <td>${row.company}</td>
+    <td>${row.country}</td>
+    <td>
+      <button class="edit-btn" data-id="${row.id}"><i class="fas fa-pencil-alt"></i></button>
+      <button class="delete-btn" data-id="${row.id}"><i class="fa-solid fa-trash"></i></button>
+    </td>
+  </tr>`;
+
 var fetchRecords = () => {
   $.ajax({
-    url: "update_delete.php",
+    url: "includes/formdata.php",
     method: "GET",
-    success: (data) => $(".user-records-body").html(data),
-    error: (err) => console.error("Error fetching records:", err),
+    dataType: "json",
+    success: (response) => {
+      $(".user-records-body").html(response.data.map(usersDataTemplate).join(""));
+    },
+    error: () => showToast("Error fetching records", "error"),
   });
 };
-
-$(".user-details-form").on("submit", function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: "submit.php",
-    method: "POST",
-    data: $(this).serialize(),
-    success: (response) => {
-      showToast(response, "success");
-      $(".user-details-form")[0].reset();
-      fetchRecords();
-    },
-    error: (err) => {
-      console.error("Error submitting form:", err);
-      showToast("Error submitting form!", "error");
-    },
-  });
-});
-
-$(".user-records-body").on("click", ".edit-btn", function () {
-  var row = $(this).closest("tr");
-  var form = $(".user-details-form");
-  var formData = new FormData();
-  formData.set("id", $(this).data("id"));
-
-  row.find("td[data-key]").each(function () {
-    formData.set($(this).attr("data-key"), $(this).text().trim());
-  });
-
-  formData.forEach((value, key) => form.find(`[name='${key}']`).val(value));
-});
-
-$(".user-records-body").on("click", ".delete-btn", function () {
-  $.ajax({
-    url: "update_delete.php",
-    method: "POST",
-    data: { deleteId: $(this).data("id") },
-    success: (response) => {
-      showToast(response, "success");
-      fetchRecords();
-    },
-    error: (err) => {
-      console.error("Error deleting record:", err);
-      showToast("Error deleting record!", "error");
-    },
-  });
-});
 
 var showToast = (message, type) => {
   Toastify({
@@ -64,4 +33,113 @@ var showToast = (message, type) => {
   }).showToast();
 };
 
-fetchRecords();
+if (document.URL.includes("index.php")) {
+  fetchRecords();
+}
+
+$(".users-registration-form").on("submit", function (e) {
+  e.preventDefault();
+  var formData = new FormData(this);
+  var id = formData.get("id");
+
+  if (!id) {
+    $.ajax({
+      url: "includes/formdata.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: (response) => {
+        showToast(response.message, "success");
+        e.target.reset();
+        fetchRecords();
+      },
+      error: () => showToast("Error adding record", "error"),
+    });
+  } else {
+    var formJSON = Object.fromEntries(formData.entries());
+
+    $.ajax({
+      url: "includes/formdata.php",
+      method: "PATCH",
+      data: JSON.stringify(formJSON),
+      contentType: "application/json",
+      dataType: "json",
+      success: (response) => {
+        showToast(response.message, "success");
+        e.target.reset();
+        fetchRecords();
+      },
+      error: () => showToast("Error updating record", "error"),
+    });
+  }
+});
+
+$(".user-records-body").on("click", ".edit-btn", function () {
+  var id = $(this).data("id");
+  $.ajax({
+    url: "includes/formdata.php",
+    method: "GET",
+    dataType: "json",
+    data: { action: "get_single", id },
+    success: (response) => {
+      Object.keys(response.data).forEach((key) => {
+        $(`.users-registration-form [name='${key}']`).val(response.data[key]);
+      });
+    },
+    error: () => showToast("Error fetching record", "error"),
+  });
+});
+
+$(".user-records-body").on("click", ".delete-btn", (e) => {
+  var id = $(e.currentTarget).data("id");
+  var row = $(e.currentTarget).closest("tr");
+
+  $.ajax({
+    url: "includes/formdata.php",
+    method: "DELETE",
+    data: JSON.stringify({ id }),
+    contentType: "application/json",
+    dataType: "json",
+    success: (response) => {
+      showToast(response.message, "success");
+      row.remove();
+    },
+    error: () => showToast("Error deleting record", "error"),
+  });
+});
+
+$(".login-form").on("submit", (e) => {
+  e.preventDefault();
+  var formData = $(e.currentTarget).serialize();
+
+  $.ajax({
+    url: "includes/login.php",
+    method: "POST",
+    data: formData,
+    dataType: "json",
+    success: (response) => {
+      if (response.success) {
+        showToast(response.message, "success");
+        setTimeout(() => {
+          window.location.href = "index.php";
+        }, 2000);
+      } else {
+        showToast(response.message, "error");
+      }
+    },
+    error: () => showToast("Server error, please try again.", "error"),
+  });
+});
+
+$(".logout-btn").on("click", () => {
+  showToast("Logging Out Successfully", "success");
+  setTimeout(() => {
+    window.location.href = "includes/logout.php";
+  }, 2000);
+});
+
+$(".login-again-btn").on("click", () => {
+  window.location.href = "../admin.php";
+});

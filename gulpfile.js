@@ -5,8 +5,6 @@ import cleanCSS from "gulp-clean-css";
 import uglify from "gulp-uglify";
 import concat from "gulp-concat";
 import autoprefixer from "gulp-autoprefixer";
-import imagemin from "gulp-imagemin";
-import imageminPngquant from "imagemin-pngquant";
 
 const sassCompiler = gulpSass(sass);
 
@@ -47,10 +45,6 @@ const paths = {
       filename: "vendors.min.css",
     },
   },
-  images: {
-    src: "assets/img/*",
-    dest: "dist/img",
-  },
 };
 
 const styles = () =>
@@ -83,26 +77,10 @@ const mainScripts = () =>
     .pipe(concat(paths.scripts.main.filename))
     .pipe(dest(paths.scripts.main.dest));
 
-const minifyImages = () =>
-  src(paths.images.src, { encoding: false })
-    .pipe(
-      imagemin(
-        [
-          imageminPngquant({
-            quality: [0.6, 0.8],
-          }),
-        ],
-        {
-          verbose: true,
-        }
-      )
-    )
-    .pipe(dest(paths.images.dest));
-
 const watchFiles = () => {
   watch("assets/css/**/*.scss", styles);
   watch("assets/js/**/*.js", mainScripts);
 };
 
-const build = series(styles, vendorScripts, vendorStyles, mainScripts, minifyImages);
+const build = series(styles, vendorScripts, vendorStyles, mainScripts);
 export default parallel(build, watchFiles);
