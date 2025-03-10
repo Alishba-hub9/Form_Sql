@@ -1,11 +1,11 @@
 @use "abstracts/colors";
-@use "abstracts/mixins";
 @use "abstracts/functions";
 
-.wrapper-login-page {
+.wrapper-register-page {
   text-align: center;
   padding: functions.rem(100) 0;
-  .login-content {
+
+  .register-content {
     background-color: colors.$accent-light-color;
     padding: functions.rem(30);
     border: 1px solid colors.$border-color;
@@ -13,15 +13,20 @@
     margin: auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
+    h1 {
+      margin-bottom: functions.rem(15);
+    }
+
     p {
       margin: functions.rem(20) 0;
       padding: 0 functions.rem(120);
       line-height: 22px;
     }
 
-    .login-form {
+    .register-form {
       width: 42%;
       margin: auto;
+
       input,
       button {
         width: 100%;
@@ -35,60 +40,22 @@
       }
 
       button {
-        background-color: colors.$primary-color;
         padding: functions.rem(18) 0;
         color: colors.$accent-light-color;
         border: none;
+        background-color: colors.$primary-color;
         margin: functions.rem(23) 0 0;
         width: 30%;
         cursor: pointer;
-
         &:hover {
           background-color: #2980b9;
         }
       }
     }
-  }
-}
 
-@include mixins.responsive("lg-devices") {
-  .wrapper-login-page {
-    .login-content {
-      p {
-        padding: 0 functions.rem(60);
-        line-height: 16px;
-      }
-      .login-form {
-        input {
-          padding: functions.rem(12);
-        }
-        button {
-          padding: functions.rem(13);
-        }
-      }
-    }
-  }
-}
-
-@include mixins.responsive("md-devices") {
-  .wrapper-login-page {
-    .login-content {
-      p {
-        padding: 0 functions.rem(20);
-      }
-      .login-form {
-        width: auto;
-      }
-    }
-  }
-}
-
-@include mixins.responsive("sm-devices") {
-  .wrapper-login-page {
-    .login-content {
-      p {
-        padding: 0 functions.rem(0);
-      }
+    a {
+      color: colors.$primary-color;
+      font-weight: bold;
     }
   }
 }

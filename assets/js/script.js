@@ -33,7 +33,7 @@ var showToast = (message, type) => {
   }).showToast();
 };
 
-if (document.URL.includes("index.php")) {
+if (document.URL.includes("admin.php")) {
   fetchRecords();
 }
 
@@ -121,25 +121,32 @@ $(".login-form").on("submit", (e) => {
     dataType: "json",
     success: (response) => {
       if (response.success) {
-        showToast(response.message, "success");
-        setTimeout(() => {
-          window.location.href = "index.php";
-        }, 2000);
+        window.location.href = "admin.php";
       } else {
         showToast(response.message, "error");
       }
     },
-    error: () => showToast("Server error, please try again.", "error"),
   });
 });
 
-$(".logout-btn").on("click", () => {
-  showToast("Logging Out Successfully", "success");
-  setTimeout(() => {
-    window.location.href = "includes/logout.php";
-  }, 2000);
-});
+$(".register-form").on("submit", (e) => {
+  e.preventDefault();
 
-$(".login-again-btn").on("click", () => {
-  window.location.href = "../admin.php";
+  var formData = $(e.currentTarget).serialize();
+
+  $.ajax({
+    url: "register.php",
+    method: "POST",
+    data: formData,
+    dataType: "json",
+    success: (response) => {
+      showToast(response.message, response.success ? "success" : "error");
+      if (response.success) {
+        $(".register-form")[0].reset();
+      }
+    },
+    error: () => {
+      showToast("Something went wrong. Try again.", "error");
+    },
+  });
 });

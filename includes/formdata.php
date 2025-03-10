@@ -5,6 +5,10 @@ header("Content-Type: application/json; charset=UTF-8");
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? null;
 
+function sanitize_input($data) {
+    return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+}
+
 if ($method === "GET") {
     if ($action === "get_single") {
         $id = $_GET['id'] ?? null;
@@ -26,11 +30,17 @@ if ($method === "GET") {
 }
 
 if ($method === "POST") {
-    $name = $_POST['name'] ?? null;
-    $age = $_POST['age'] ?? null;
-    $phone = $_POST['phone'] ?? null;
-    $company = $_POST['company'] ?? null;
-    $country = $_POST['country'] ?? null;
+    $name = isset($_POST['name']) ? sanitize_input($_POST['name']) : null;
+    $age = isset($_POST['age']) ? intval($_POST['age']) : null;
+    $phone = isset($_POST['phone']) ? sanitize_input($_POST['phone']) : null;
+    $company = isset($_POST['company']) ? sanitize_input($_POST['company']) : null;
+    $country = isset($_POST['country']) ? sanitize_input($_POST['country']) : null;
+    
+
+    if (empty($name) || empty($age) || empty($phone) || empty($company) || empty($country)) {
+        echo json_encode(["status" => "error", "message" => "All fields are required"]);
+        exit;
+    }
 
     $stmt = $conn->prepare("INSERT INTO form_data (name, age, phone, company, country) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sisss", $name, $age, $phone, $company, $country);
@@ -62,6 +72,11 @@ if ($method === "PATCH") {
     $company = $inputData['company'] ?? null;
     $country = $inputData['country'] ?? null;
 
+    if (empty($name) || empty($age) || empty($phone) || empty($company) || empty($country)) {
+        echo json_encode(["status" => "error", "message" => "All fields are required"]);
+        exit;
+    }
+
     $stmt = $conn->prepare("UPDATE form_data SET name=?, age=?, phone=?, company=?, country=? WHERE id=?");
     $stmt->bind_param("sisssi", $name, $age, $phone, $company, $country, $id);
     $result = $stmt->execute();
@@ -85,6 +100,7 @@ if ($method === "DELETE") {
         echo json_encode(["status" => "error", "message" => "ID is required for deletion"]);
         exit;
     }
+
 
     $stmt = $conn->prepare("DELETE FROM form_data WHERE id=?");
     $stmt->bind_param("i", $id);

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Form</title>
+    <link rel="stylesheet" href="dist/css/vendors.min.css" />
+    <link rel="stylesheet" href="dist/css/style.css" />
+  </head>
+  <body>
+    <div class="wrapper-register-page">
+      <div class="container">
+        <div class="register-content">
+          <h1>Register Your Account</h1>
+          <form method="POST" action="register.php" class="register-form">
+            <input type="text" name="username" placeholder="Enter Username" required />
+            <input type="email" name="email" placeholder="Enter Email" required />
+            <input type="password" name="password" placeholder="Enter Password" required />
+            <button type="submit">Register</button>
+          </form>
+          <p>Already have an account? <a href="admin.php">Click here to Login</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="dist/js/vendors.min.js" defer></script>
+    <script src="dist/js/script.min.js" defer></script>
+  </body>
+</html>
