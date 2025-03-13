@@ -28,6 +28,7 @@ require 'includes/db.php';
                 <input type="password" name="password" placeholder="Enter Your Password" required>
                 <button type="submit">Login</button>
         </form>
+        <p>Don't have an account? <a href="./register-acc.html">Click here to register</a></p>
         </div>
 
 <script src="dist/js/vendors.min.js"></script>
